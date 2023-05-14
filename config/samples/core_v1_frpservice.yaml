@@ -1,0 +1,12 @@
+apiVersion: core.faione.frp/v1
+kind: FrpService
+metadata:
+  labels:
+    app.kubernetes.io/name: frpservice
+    app.kubernetes.io/instance: frpservice-sample
+    app.kubernetes.io/part-of: frp-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: frp-operator
+  name: frpservice-sample
+spec:
+  # TODO(user): Add fields here

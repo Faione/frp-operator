@@ -1,0 +1,27 @@
+# permissions for end users to view frpservices.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: frpservice-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: frp-operator
+    app.kubernetes.io/part-of: frp-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: frpservice-viewer-role
+rules:
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - frpservices
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - frpservices/status
+  verbs:
+  - get
