@@ -19,12 +19,15 @@ package controller
 import (
 	"context"
 
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	corev1 "github.com/Faione/frp-operator/api/v1"
+	fcorev1 "github.com/Faione/frp-operator/api/v1"
 )
 
 // FrpServiceReconciler reconciles a FrpService object
@@ -47,16 +50,103 @@ type FrpServiceReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.14.4/pkg/reconcile
 func (r *FrpServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	log := log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	var frps fcorev1.FrpService
+
+	if err := r.Get(ctx, req.NamespacedName, &frps); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	svc := &corev1.Service{}
+	if err := r.Get(ctx, req.NamespacedName, svc); err != nil {
+
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+
+		log.Info("create frps svc")
+		if err := r.Create(ctx, defaultService(&frps)); err != nil {
+			return ctrl.Result{}, err
+		}
+
+		return ctrl.Result{}, nil
+
+	}
+
+	endpoints := &corev1.Endpoints{}
+	if err := r.Get(ctx, req.NamespacedName, endpoints); err != nil {
+
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+
+		log.Info("create frps svc")
+		if err := r.Create(ctx, defaultEndpoints(svc, &frps)); err != nil {
+			return ctrl.Result{}, err
+		}
+
+		return ctrl.Result{}, nil
+
+	}
+
+	// update
+	log.Info("todo update frps svc")
+	// delete
 
 	return ctrl.Result{}, nil
+}
+
+func defaultService(frps *fcorev1.FrpService) *corev1.Service {
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      frps.Name,
+			Namespace: frps.Namespace,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(frps, frps.GroupVersionKind()),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+				{
+					Port:       frps.Spec.Port,
+					TargetPort: intstr.FromInt(int(frps.Spec.Port)),
+				},
+			},
+		},
+	}
+	return svc
+}
+
+func defaultEndpoints(svc *corev1.Service, frps *fcorev1.FrpService) *corev1.Endpoints {
+	return &corev1.Endpoints{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      svc.Name,
+			Namespace: svc.Namespace,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(svc, svc.GroupVersionKind()),
+			},
+		},
+		Subsets: []corev1.EndpointSubset{
+			{
+				Addresses: []corev1.EndpointAddress{
+					{
+						IP: frps.Spec.Address,
+					},
+				},
+				Ports: []corev1.EndpointPort{
+					{
+						Port: frps.Spec.Port,
+					},
+				},
+			},
+		},
+	}
 }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *FrpServiceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&corev1.FrpService{}).
+		For(&fcorev1.FrpService{}).
 		Complete(r)
 }

@@ -1,0 +1,59 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - frpservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - frpservices/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - frpservices/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - serviceproxies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - serviceproxies/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - core.faione.frp
+  resources:
+  - serviceproxies/status
+  verbs:
+  - get
+  - patch
+  - update

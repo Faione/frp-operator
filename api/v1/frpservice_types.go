@@ -28,9 +28,11 @@ type FrpServiceSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
+	//+kubebuilder:validation:MinLength=0
 	Address string `json:"address"`
 
-	Port string `json:"port"`
+	//+kubebuilder:validation:Minimum=0
+	Port int32 `json:"port"`
 }
 
 // FrpServiceStatus defines the observed state of FrpService
