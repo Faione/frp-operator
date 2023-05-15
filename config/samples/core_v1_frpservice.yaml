@@ -9,4 +9,6 @@ metadata:
     app.kubernetes.io/created-by: frp-operator
   name: frpservice-sample
 spec:
-  # TODO(user): Add fields here
+  address: 10.208.129.2
+  port: 17000
+  token: fanghao@lei

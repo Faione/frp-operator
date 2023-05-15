@@ -69,9 +69,6 @@ func (r *FrpServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		if err := r.Create(ctx, defaultService(&frps)); err != nil {
 			return ctrl.Result{}, err
 		}
-
-		return ctrl.Result{}, nil
-
 	}
 
 	endpoints := &corev1.Endpoints{}
@@ -81,7 +78,7 @@ func (r *FrpServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			return ctrl.Result{}, err
 		}
 
-		log.Info("create frps svc")
+		log.Info("create frps endpoints")
 		if err := r.Create(ctx, defaultEndpoints(svc, &frps)); err != nil {
 			return ctrl.Result{}, err
 		}
@@ -92,7 +89,8 @@ func (r *FrpServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 	// update
 	log.Info("todo update frps svc")
-	// delete
+
+	// using OwnerReferences there is need to delete svc or endpoints
 
 	return ctrl.Result{}, nil
 }

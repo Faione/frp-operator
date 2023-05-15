@@ -33,6 +33,10 @@ type FrpServiceSpec struct {
 
 	//+kubebuilder:validation:Minimum=0
 	Port int32 `json:"port"`
+
+	//+kubebuilder:validation:MinLength=0
+	//+optional
+	Token string `json:"token"`
 }
 
 // FrpServiceStatus defines the observed state of FrpService
