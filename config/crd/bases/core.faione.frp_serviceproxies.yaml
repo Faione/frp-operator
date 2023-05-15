@@ -35,10 +35,48 @@ spec:
           spec:
             description: ServiceProxySpec defines the desired state of ServiceProxy
             properties:
-              foo:
-                description: Foo is an example field of ServiceProxy. Edit serviceproxy_types.go
-                  to remove/update
+              frps:
+                properties:
+                  name:
+                    minLength: 0
+                    type: string
+                  namespace:
+                    minLength: 0
+                    type: string
+                required:
+                - name
+                type: object
+              image:
+                minLength: 0
                 type: string
+              mountPath:
+                minLength: 0
+                type: string
+              proxies:
+                items:
+                  properties:
+                    localIp:
+                      minLength: 0
+                      type: string
+                    localPort:
+                      minLength: 0
+                      type: string
+                    name:
+                      minLength: 0
+                      type: string
+                    remotePort:
+                      minLength: 0
+                      type: string
+                  required:
+                  - localIp
+                  - localPort
+                  - name
+                  - remotePort
+                  type: object
+                type: array
+            required:
+            - frps
+            - proxies
             type: object
           status:
             description: ServiceProxyStatus defines the observed state of ServiceProxy

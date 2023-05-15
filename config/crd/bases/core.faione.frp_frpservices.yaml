@@ -42,6 +42,9 @@ spec:
                 format: int32
                 minimum: 0
                 type: integer
+              token:
+                minLength: 0
+                type: string
             required:
             - address
             - port

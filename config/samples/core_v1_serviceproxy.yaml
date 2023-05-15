@@ -9,4 +9,11 @@ metadata:
     app.kubernetes.io/created-by: frp-operator
   name: serviceproxy-sample
 spec:
-  # TODO(user): Add fields here
+  frps:
+    name: frpservice-sample
+    namespace: default
+  proxies:
+    - name: "example_server"
+      localIp: echoserver-service
+      localPort: "8080"
+      remotePort: "8888"

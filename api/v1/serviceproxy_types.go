@@ -23,13 +23,45 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type FrpsMeta struct {
+	//+kubebuilder:validation:MinLength=0
+	Name string `json:"name"`
+
+	//+kubebuilder:validation:MinLength=0
+	//+optional
+	NameSpace string `json:"namespace"`
+}
+
+type ProxyEntry struct {
+	//+kubebuilder:validation:MinLength=0
+	Name string `json:"name"`
+
+	//+kubebuilder:validation:MinLength=0
+	LocalIp string `json:"localIp"`
+
+	//+kubebuilder:validation:MinLength=0
+	LocalPort string `json:"localPort"`
+
+	//+kubebuilder:validation:MinLength=0
+	RemotePort string `json:"remotePort"`
+}
+
 // ServiceProxySpec defines the desired state of ServiceProxy
 type ServiceProxySpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of ServiceProxy. Edit serviceproxy_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	//+kubebuilder:validation:MinLength=0
+	//+optional
+	Image string `json:"image"`
+
+	//+kubebuilder:validation:MinLength=0
+	//+optional
+	MountPath string `json:"mountPath"`
+
+	Frps FrpsMeta `json:"frps"`
+
+	Proxies []ProxyEntry `json:"proxies"`
 }
 
 // ServiceProxyStatus defines the observed state of ServiceProxy
